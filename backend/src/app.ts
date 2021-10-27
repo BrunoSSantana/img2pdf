@@ -15,10 +15,10 @@ app.use(express.urlencoded({ extended: true }));
 app.post('/upload', multer(configMulter).array('file'), (request, response) => {
   const files = request.files
 
-  for (let file = 0; file > files.length; file ++) {
+  for (let file = 0; file < files.length; file ++) {
     const doc = new pdfDocument()
     const newFile = files[file]
-
+    
     const originalFile = `upload/${newFile.filename}`
     const fileName = newFile.filename.replace('png', 'pdf')
   
