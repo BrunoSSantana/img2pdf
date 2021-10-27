@@ -12,21 +12,26 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.post('/upload', multer(configMulter).single('file'), (request, response) => {
-  const doc = new pdfDocument()
-  const {filename} = request.file
-  const originalFile = `upload/${filename}`
-  const fileName = filename.replace('png', 'pdf')
+app.post('/upload', multer(configMulter).array('file'), (request, response) => {
+  const files = request.files
 
-  doc.pipe(fs.createWriteStream(`upload/${fileName}`))
-  setTimeout(()=>{
-    doc.image(originalFile)
-    .end()
-  }, 1000)
+  for (let file = 0; file > files.length; file ++) {
+    const doc = new pdfDocument()
+    const newFile = files[file]
 
-  setTimeout(()=>{
-    fs.unlinkSync(`upload/${filename}`)
-  }, 1000)
+    const originalFile = `upload/${newFile.filename}`
+    const fileName = newFile.filename.replace('png', 'pdf')
+  
+    doc.pipe(fs.createWriteStream(`upload/${fileName}`))
+    setTimeout(()=>{
+      doc.image(originalFile)
+      .end()
+    }, 1000)
+  
+    setTimeout(()=>{
+      fs.unlinkSync(`upload/${newFile.filename}`)
+    }, 2000)
+  }
 })
 
 app.listen(PORT, () => console.log('🚀'))
