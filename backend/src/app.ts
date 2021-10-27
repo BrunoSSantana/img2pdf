@@ -18,16 +18,16 @@ app.post('/upload', multer(configMulter).array('file'), (request, response) => {
   for (let file = 0; file < files.length; file ++) {
     const doc = new pdfDocument()
     const newFile = files[file]
-    
+
     const originalFile = `upload/${newFile.filename}`
     const fileName = newFile.filename.replace('png', 'pdf')
-  
+
     doc.pipe(fs.createWriteStream(`upload/${fileName}`))
     setTimeout(()=>{
-      doc.image(originalFile)
+      doc.image(originalFile, 0, 0, {cover: [340, 340]})
       .end()
     }, 1000)
-  
+
     setTimeout(()=>{
       fs.unlinkSync(`upload/${newFile.filename}`)
     }, 2000)
